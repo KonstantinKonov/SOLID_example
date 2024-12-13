@@ -33,6 +33,7 @@ class PaymentProcessorSms(PaymentProcessor):
 class DebitPaymentProcessor(PaymentProcessorSms):
     def __init__(self, security_code):
         self.security_code = security_code
+        self.verified = False
 
     def auth_sms(self, code):
         print(f'verifying sms code {code}')
@@ -57,6 +58,7 @@ class CreditPaymentProcessor(PaymentProcessor):
 class PaypalPaymentProcessor(PaymentProcessorSms):
     def __init__(self, email):
         self.email = email  
+        self.verified = False
 
     def auth_sms(self, code):
         print(f'verifying sms code {code}')
