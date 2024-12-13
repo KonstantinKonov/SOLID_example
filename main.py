@@ -11,9 +11,3 @@ pay.pay(order)
 
 pay_by_paypal = PaypalPaymentProcessor(email='something@something.com')
 pay_by_paypal.pay(order)
-
-
-# LSP - можно заменить родительским методом 
-def make_payment(order, payment_method: PaymentProcessor):
-    payment_method.pay(order)
-make_payment(order, PaymentProcessor())
