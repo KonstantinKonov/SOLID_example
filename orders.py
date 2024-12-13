@@ -30,16 +30,29 @@ class PaymentProcessorSms(PaymentProcessor):
         pass
 
 
-class DebitPaymentProcessor(PaymentProcessorSms):
-    def __init__(self, security_code):
+class SMSAuth:
+    authorized = False 
+
+    def verify_code(self, code):
+        print(f'verifying code {code}')
+        self.authorized = True
+
+    def is_authorized(self) -> bool:
+        return self.authorized
+
+
+class DebitPaymentProcessor(PaymentProcessor):
+    def __init__(self, security_code, authorizer: SMSAuth):
+        self.authorizer = authorizer
         self.security_code = security_code
-        self.verified = False
 
     def auth_sms(self, code):
         print(f'verifying sms code {code}')
         self.verified = True
 
     def pay(self, order: Order):
+        if not self.authorizer.is_authorized():
+            raise Exception('not authorized')
         print('processing debit payment type')
         print(f'verifying security code: {self.security_code}')
         order.status = 'paid'
@@ -50,21 +63,23 @@ class CreditPaymentProcessor(PaymentProcessor):
         self.security_code = security_code
 
     def pay(self, order: Order):
-        print('processing credit payment type')
+        print('processing debit payment type')
         print(f'verifying security code: {self.security_code}')
         order.status = 'paid'
 
 
 class PaypalPaymentProcessor(PaymentProcessorSms):
-    def __init__(self, email):
+    def __init__(self, email, authorizer: SMSAuth):
         self.email = email  
-        self.verified = False
+        self.authorizer = authorizer
 
     def auth_sms(self, code):
         print(f'verifying sms code {code}')
         self.verified = True
 
     def pay(self, order: Order):
+        if not self.authorizer.is_authorized():
+            raise Exception('not authorized')
         print('processing paypal payment type')
         print(f'verifying email address: {self.email}')
         order.status = 'paid'
