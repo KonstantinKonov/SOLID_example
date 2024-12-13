@@ -47,6 +47,18 @@ class SMSAuth(Authorizer):
         return self.authorized
 
 
+class NotARobot(Authorizer):
+    authorized = False
+
+
+    def not_a_robot(self):
+        print('are you a robot?')
+        self.authorized = True
+
+    def is_authorized(self) -> bool:
+        return self.authorized
+
+
 class DebitPaymentProcessor(PaymentProcessor):
     def __init__(self, security_code, authorizer: Authorizer):
         self.authorizer = authorizer
